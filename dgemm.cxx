@@ -67,11 +67,13 @@ int main(int argc, char ** argv){
             , (int const*)&NoNo
             );
       chrono["holes:dgemm"].stop();
+#if !defined(NO_REORDER)
       chrono["holes:reorder"].start();
       for (int ijk = 0; ijk < NoNoNo; ijk++) {
         Tijk.data()[ijk] = 1.0;
       }
       chrono["holes:reorder"].stop();
+#endif
     }
     chrono["holes"].stop();
 
@@ -94,11 +96,13 @@ int main(int argc, char ** argv){
             , (int const*)&NoNo
             );
       chrono["particles:dgemm"].stop();
+#if !defined(NO_REORDER)
       chrono["particles:reorder"].start();
       for (int ijk = 0; ijk < NoNoNo; ijk++) {
         Tijk.data()[ijk] = 1.0;
       }
       chrono["particles:reorder"].stop();
+#endif
     }
     chrono["particles"].stop();
 
