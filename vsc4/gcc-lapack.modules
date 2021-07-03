@@ -1,0 +1,5 @@
+module purge
+module load cmake/3.17.3-gcc-9.1.0-tsjr5x6
+module load gcc/10.2.0-gcc-9.1.0-2aa5hfe
+module load openmpi/4.0.3-gcc-9.1.0-it4lnqb
+module load netlib-lapack/3.8.0-gcc-9.1.0-z5qzrho

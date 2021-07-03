@@ -4,8 +4,12 @@
 #include <chrono>
 #include <map>
 #include <string>
+#define Q(x) #x
+#define QUOTE(x) Q(x)
+#define SHOW_MACRO(x) #x " = " QUOTE(x)
+#define SHOW_VAR(x) #x " = " << x
 
-#if defined(HAS_MKL)
+#if defined(HAS_MKL) || defined(HAS_LAPACK)
 
 extern "C" {
   void dgemm_(
@@ -23,7 +27,7 @@ extern "C" {
     double *C,
     const int *ldc
   );
-};
+}
 
 #endif
 

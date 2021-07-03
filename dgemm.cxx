@@ -22,7 +22,9 @@ int main(int argc, char ** argv){
     ;
 
   const int NoNo = No*No, NoNoNo = No*No*No;
-  const double flopCount = double(NoNoNo) * double(No+Nv) * 2.0 * 6.0 / 1e9;
+  const double flopCountParticles = double(NoNoNo) * double(Nv) * 2.0 * 6.0 / 1e9;
+  const double flopCountHoles = double(NoNoNo) * double(No) * 2.0 * 6.0 / 1e9;
+  const double flopCount = flopCountHoles + flopCountParticles;
 
   std::vector<double>
       TABhh(No*No), VhhhC(NoNoNo), Tijk(NoNoNo)
@@ -30,16 +32,23 @@ int main(int argc, char ** argv){
 
   std::cout << "Doing DGEMM Tests\n";
   std::cout << "»»»»»»»»»»»»»»»»»\n";
-  std::cout << "No: " << No << "\n";
-  std::cout << "Nv: " << Nv << "\n";
-  std::cout << "its: " << iterations << "\n";
+  std::cout << SHOW_VAR(No) << "\n";
+  std::cout << SHOW_VAR(Nv) << "\n";
+  std::cout << SHOW_VAR(iterations) << "\n";
   std::cout << "debug: " << DEBUG << "\n";
 #if defined(HAS_INTEL)
   std::cout << "intel compiler\n";
+#else
+  std::cout << "gcc compiler\n";
 #endif
+#if defined(BLIS_ARCH)
+  std::cout << SHOW_MACRO(BLIS_ARCH) << "\n";
+#endif
+  std::cout << SHOW_MACRO(GIT_COMMIT) << "\n";
+  std::cout << SHOW_MACRO(CONFIG) << "\n";
 
   chrono["doubles"].start();
-  for (size_t it = 0; it < iterations; it++) {
+  for (int it = 0; it < iterations; it++) {
     chrono["start:stop"].start();
     chrono["start:stop"].stop();
 
@@ -63,7 +72,7 @@ int main(int argc, char ** argv){
             );
       chrono["holes:dgemm"].stop();
       chrono["holes:reorder"].start();
-      for (size_t ijk = 0; ijk < NoNoNo; ijk++) {
+      for (int ijk = 0; ijk < NoNoNo; ijk++) {
         Tijk.data()[ijk] = 1.0;
       }
       chrono["holes:reorder"].stop();
@@ -90,7 +99,7 @@ int main(int argc, char ** argv){
             );
       chrono["particles:dgemm"].stop();
       chrono["particles:reorder"].start();
-      for (size_t ijk = 0; ijk < NoNoNo; ijk++) {
+      for (int ijk = 0; ijk < NoNoNo; ijk++) {
         Tijk.data()[ijk] = 1.0;
       }
       chrono["particles:reorder"].stop();
@@ -118,6 +127,14 @@ int main(int argc, char ** argv){
     << "flops:doubles:no-reorder "
     << flopCount * iterations
     / (chrono["particles:dgemm"].count() + chrono["holes:dgemm"].count())
+    << "\n";
+  std::cout
+    << "flops:particles "
+    << flopCountParticles * iterations / chrono["particles:dgemm"].count()
+    << "\n";
+  std::cout
+    << "flops:holes "
+    << flopCountHoles * iterations / chrono["holes:dgemm"].count()
     << "\n";
 
   return 0;
