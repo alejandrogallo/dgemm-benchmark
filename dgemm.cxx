@@ -2,13 +2,7 @@
 #include <vector>
 #include <iomanip>
 #include "utils.h"
-#ifdef HAS_BLIS
-#include <blis.h>
-#endif
-
-#if !defined(DEBUG)
-#  define DEBUG "unknown"
-#endif
+#include "dgemm.h"
 
 
 int main(int argc, char ** argv){
@@ -35,10 +29,12 @@ int main(int argc, char ** argv){
   std::cout << SHOW_VAR(No) << "\n";
   std::cout << SHOW_VAR(Nv) << "\n";
   std::cout << SHOW_VAR(iterations) << "\n";
-  std::cout << "debug: " << DEBUG << "\n";
+  std::cout << SHOW_VAR(flopCount) << "\n";
+  std::cout << SHOW_VAR(flopCountHoles) << "\n";
+  std::cout << SHOW_VAR(flopCountParticles) << "\n";
 #if defined(HAS_INTEL)
   std::cout << "intel compiler\n";
-#else
+#elif defined(HAS_GCC)
   std::cout << "gcc compiler\n";
 #endif
 #if defined(BLIS_ARCH)

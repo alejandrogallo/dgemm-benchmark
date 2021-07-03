@@ -4,6 +4,8 @@ TARGETS = dgemm-debug dgemm
 CONFIG ?= icc
 include ${CONFIG}.mk
 
+$(info CONFIG = $(CONFIG))
+
 
 all: $(patsubst %,bin/${CONFIG}/%,$(TARGETS))
 $(TARGETS): $(SRC) Makefile

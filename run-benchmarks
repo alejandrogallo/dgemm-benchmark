@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+CONFIGS=`ls *.mk | xargs -I {} basename {} .mk`
+BENCHES=(
+  "27-278-75402"
+  "57-562-309809"
+)
+cluster=vsc4
+logs="./logs"
+
+./${cluster}/compile-all
+
+mkdir -p $logs
+
+for config in $CONFIGS; do
+  source $cluster/${config}.modules
+for bench in ${BENCHES[@]}; do
+for bin in dgemm dgemm-debug; do
+  echo $bench
+  ./bin/$config/$bin `tr '-' ' ' <<< $bench` > $logs/$config-${bin}-${bench}.out &
+done
+done
+done
