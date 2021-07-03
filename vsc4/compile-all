@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+configs=(
+icc
+gcc-blis
+gcc-lapack
+)
+
+for config in ${configs[@]}; do
+  source vsc4/${config}.modules
+  make all CONFIG=${config} -j
+done
