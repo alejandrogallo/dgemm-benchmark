@@ -4,7 +4,7 @@
 #include <blis.h>
 #endif
 
-#if defined(HAS_MKL) || defined(HAS_LAPACK)
+#if defined(HAS_MKL) || defined(HAS_LAPACK) || defined(HAS_OPENBLAS)
 
 extern "C" {
   void dgemm_(

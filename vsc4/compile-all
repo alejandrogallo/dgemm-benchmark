@@ -1,12 +1,8 @@
 #!/usr/bin/env bash
 
-configs=(
-icc
-gcc-blis
-gcc-lapack
-)
+CONFIGS=`ls *.mk | xargs -I {} basename {} .mk`
 
-for config in ${configs[@]}; do
+for config in ${CONFIGS}; do
   source vsc4/${config}.modules
   make all CONFIG=${config} -j
 done
