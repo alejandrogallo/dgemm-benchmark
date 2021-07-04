@@ -6,3 +6,6 @@ for config in ${CONFIGS}; do
   source vsc4/${config}.modules
   make -s all CONFIG=${config} -j &
 done
+
+## wait for everyone to be there
+wait

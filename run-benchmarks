@@ -8,6 +8,11 @@ BENCHES=(
 cluster=vsc4
 logs="./logs"
 
+BINS=(
+dgemm dgemm-debug
+triples triples-debug
+)
+
 ./${cluster}/compile-all
 
 mkdir -p $logs
@@ -15,7 +20,7 @@ mkdir -p $logs
 for config in $CONFIGS; do
   source $cluster/${config}.modules
 for bench in ${BENCHES[@]}; do
-for bin in dgemm dgemm-debug; do
+for bin in ${BINS[@]}; do
   echo $bench
   ./bin/$config/$bin `tr '-' ' ' <<< $bench` > $logs/$config-${bin}-${bench}.out &
 done

@@ -6,8 +6,8 @@
 #include <string>
 #define Q(...) #__VA_ARGS__
 #define QUOTE(...) Q(__VA_ARGS__)
-#define SHOW_MACRO(x) #x " = " QUOTE(x)
-#define SHOW_VAR(x) #x " = " << x
+#define SHOW_MACRO(x) #x ": " QUOTE(x)
+#define SHOW_VAR(x) #x ": " << x
 
 // simple logger
 #define LOG if (rank == 0) std::cout

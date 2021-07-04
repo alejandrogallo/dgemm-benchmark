@@ -120,8 +120,8 @@ int main(int argc, char ** argv){
   // PRINT TIMINGS
   for (auto const& pair: chrono)
     LOG << std::setprecision(6) << std::setw(6)
-        << pair.second.count() << "  "
-        << pair.first
+        << pair.first << ": "
+        << pair.second.count()
         << std::endl;
 
   LOG
