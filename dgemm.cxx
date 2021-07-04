@@ -1,11 +1,15 @@
 #include <iostream>
 #include <vector>
 #include <iomanip>
+#include <mpi.h>
 #include "utils.h"
 #include "dgemm.h"
 
 
 int main(int argc, char ** argv){
+  int rank;
+  MPI_Init(&argc, &argv);
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
   Timings chrono;
   double one(1.0), m_one(-1.0), zero(0.0);
@@ -24,24 +28,24 @@ int main(int argc, char ** argv){
       TABhh(No*No), VhhhC(NoNoNo), Tijk(NoNoNo)
     , TAphh(NoNo*Nv), VBCph(Nv*No);
 
-  std::cout << "Doing DGEMM Tests\n";
-  std::cout << "»»»»»»»»»»»»»»»»»\n";
-  std::cout << SHOW_VAR(No) << "\n";
-  std::cout << SHOW_VAR(Nv) << "\n";
-  std::cout << SHOW_VAR(iterations) << "\n";
-  std::cout << SHOW_VAR(flopCount) << "\n";
-  std::cout << SHOW_VAR(flopCountHoles) << "\n";
-  std::cout << SHOW_VAR(flopCountParticles) << "\n";
+  LOG << "Doing DGEMM Tests\n";
+  LOG << "»»»»»»»»»»»»»»»»»\n";
+  LOG << SHOW_VAR(No) << "\n";
+  LOG << SHOW_VAR(Nv) << "\n";
+  LOG << SHOW_VAR(iterations) << "\n";
+  LOG << SHOW_VAR(flopCount) << "\n";
+  LOG << SHOW_VAR(flopCountHoles) << "\n";
+  LOG << SHOW_VAR(flopCountParticles) << "\n";
 #if defined(HAS_INTEL)
-  std::cout << "intel compiler\n";
+  LOG << "intel compiler\n";
 #elif defined(HAS_GCC)
-  std::cout << "gcc compiler\n";
+  LOG << "gcc compiler\n";
 #endif
 #if defined(BLIS_ARCH)
-  std::cout << SHOW_MACRO(BLIS_ARCH) << "\n";
+  LOG << SHOW_MACRO(BLIS_ARCH) << "\n";
 #endif
-  std::cout << SHOW_MACRO(GIT_COMMIT) << "\n";
-  std::cout << SHOW_MACRO(CONFIG) << "\n";
+  LOG << SHOW_MACRO(GIT_COMMIT) << "\n";
+  LOG << SHOW_MACRO(CONFIG) << "\n";
 
   chrono["doubles"].start();
   for (int it = 0; it < iterations; it++) {
@@ -114,28 +118,30 @@ int main(int argc, char ** argv){
 
   // PRINT TIMINGS
   for (auto const& pair: chrono)
-    std::cout << std::setprecision(6) << std::setw(6)
-              << pair.second.count() << "  "
-              << pair.first
-              << std::endl;
+    LOG << std::setprecision(6) << std::setw(6)
+        << pair.second.count() << "  "
+        << pair.first
+        << std::endl;
 
-  std::cout
+  LOG
     << "flops:doubles "
     << flopCount * iterations / chrono["doubles"].count()
     << "\n";
-  std::cout
+  LOG
     << "flops:doubles:no-reorder "
     << flopCount * iterations
     / (chrono["particles:dgemm"].count() + chrono["holes:dgemm"].count())
     << "\n";
-  std::cout
+  LOG
     << "flops:particles "
     << flopCountParticles * iterations / chrono["particles:dgemm"].count()
     << "\n";
-  std::cout
+  LOG
     << "flops:holes "
     << flopCountHoles * iterations / chrono["holes:dgemm"].count()
     << "\n";
+
+  MPI_Finalize();
 
   return 0;
 
