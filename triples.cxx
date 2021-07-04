@@ -4,7 +4,6 @@
 #include "utils.h"
 #include "dgemm.h"
 #include <mpi.h>
-#define LOG if (rank == 0) std::cout
 
 #define _IJK_(i, j, k) i + j*No + k*NoNo
 #define REORDER(__II, __JJ, __KK)                                 \
@@ -142,6 +141,7 @@ int main(int argc, char ** argv){
 #endif
   LOG << SHOW_MACRO(GIT_COMMIT) << "\n";
   LOG << SHOW_MACRO(CONFIG) << "\n";
+  LOG << SHOW_MACRO(COMPILER_VERSION) << "\n";
 
   chrono["total"].start();
   for (int it = 0; it < iterations; it++) {
@@ -156,8 +156,6 @@ int main(int argc, char ** argv){
 
   }
   chrono["total"].stop();
-
-
 
 
   // PRINT TIMINGS

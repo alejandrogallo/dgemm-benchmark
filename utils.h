@@ -4,11 +4,13 @@
 #include <chrono>
 #include <map>
 #include <string>
-#define Q(x) #x
-#define QUOTE(x) Q(x)
+#define Q(...) #__VA_ARGS__
+#define QUOTE(...) Q(__VA_ARGS__)
 #define SHOW_MACRO(x) #x " = " QUOTE(x)
 #define SHOW_VAR(x) #x " = " << x
 
+// simple logger
+#define LOG if (rank == 0) std::cout
 
 struct Timer {
   using Clock = std::chrono::high_resolution_clock;

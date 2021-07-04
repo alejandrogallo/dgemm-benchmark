@@ -46,6 +46,7 @@ int main(int argc, char ** argv){
 #endif
   LOG << SHOW_MACRO(GIT_COMMIT) << "\n";
   LOG << SHOW_MACRO(CONFIG) << "\n";
+  LOG << SHOW_MACRO(COMPILER_VERSION) << "\n";
 
   chrono["doubles"].start();
   for (int it = 0; it < iterations; it++) {

@@ -1,15 +1,11 @@
-SRC = dgemm.cxx
 TARGETS = dgemm-debug dgemm
 TARGETS += triples-debug triples
 
 CONFIG ?= icc
 include ${CONFIG}.mk
-
 $(info CONFIG = $(CONFIG))
 
 
-all: $(patsubst %,bin/${CONFIG}/%,$(TARGETS))
-$(TARGETS): $(SRC) Makefile
 CXX_FLAGS =     \
 -pedantic -Wall \
 -std=c++11      \
@@ -18,8 +14,15 @@ $(OPTIONS)      \
 -march=native   \
 -Wl,-Bstatic $(LIBS_STATIC) -Wl,-Bdynamic
 
+
+all: $(patsubst %,bin/${CONFIG}/%,$(TARGETS))
+
+
+$(TARGETS): Makefile
+
 DEFINES += -DGIT_COMMIT="$(shell git describe --always)"
 DEFINES += -DCONFIG=$(CONFIG)
+DEFINES += -DCOMPILER_VERSION="$(shell $(CXX) --version)"
 
 bin/${CONFIG}/%-debug: %.cxx
 	@mkdir -p ${@D}
