@@ -23,9 +23,11 @@ int main(int argc, char ** argv){
            , vector(hauta::option<bool>(argc, argv, "--vector", false))
            ;
 
-  std::vector<double> vA(m*k), vB(k*n), vC(m*n);
-
   double *A, *B, *C;
+  std::vector<double> vA, vB, vC;
+  vA.reserve(m*k);
+  vB.reserve(n*k);
+  vC.reserve(n*m);
   if (!vector) {
     LOG << "Using carrays\n";
     A = new double[m*k];
