@@ -27,11 +27,17 @@ int main(int argc, char ** argv){
   const double flopCount = flopCountHoles + flopCountParticles;
 
   std::vector<double>
-      TABhh(No*No), VhhhC(NoNoNo), Tijk(NoNoNo)
-    , TAphh(NoNo*Nv), VBCph(Nv*No);
+      TABhh, VhhhC, Tijk
+    , TAphh, VBCph
+    ;
 
-  LOG << "Doing DGEMM Tests\n";
-  LOG << "»»»»»»»»»»»»»»»»»\n";
+  TABhh.reserve(No*No);
+  VhhhC.reserve(NoNoNo);
+  Tijk.reserve(NoNoNo);
+  TAphh.reserve(NoNo*Nv);
+  VBCph.reserve(Nv*No);
+
+  LOG << "∷∷∷∷∷∷∷ ĐG∃MM ======\n";
   LOG << SHOW_VAR(np) << "\n";
   LOG << SHOW_VAR(No) << "\n";
   LOG << SHOW_VAR(Nv) << "\n";
@@ -39,11 +45,6 @@ int main(int argc, char ** argv){
   LOG << SHOW_VAR(flopCount) << "\n";
   LOG << SHOW_VAR(flopCountHoles) << "\n";
   LOG << SHOW_VAR(flopCountParticles) << "\n";
-#if defined(HAS_INTEL)
-  LOG << "intel compiler\n";
-#elif defined(HAS_GCC)
-  LOG << "gcc compiler\n";
-#endif
 #if defined(BLIS_ARCH)
   LOG << SHOW_MACRO(BLIS_ARCH) << "\n";
 #endif

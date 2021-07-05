@@ -45,8 +45,8 @@
                , (int const*)&NoNo       \
                );
 
-#undef REORDER
-#define REORDER(__II, __JJ, __KK)
+//#undef REORDER
+//#define REORDER(__II, __JJ, __KK)
 
 void doDoubles(size_t No, size_t Nv,
                double const* VhhhC, double const* TABhh,
@@ -61,7 +61,8 @@ void doDoubles(size_t No, size_t Nv,
 
   const size_t NoNo = No*No, NoNoNo = No*No*No;
   double one(1.0), m_one(-1.0), zero(0.0);
-  std::vector<double> _t_buffer(NoNoNo);
+  std::vector<double> _t_buffer;
+  _t_buffer.reserve(NoNoNo);
 
   for (size_t k = 0; k < NoNoNo; k++) {
     // zero the Tijk
@@ -134,20 +135,37 @@ int main(int argc, char ** argv){
   const double flopCountHoles = double(NoNoNo) * double(No) * 2.0 * 6.0 / 1e9;
   const double flopCount = flopCountHoles + flopCountParticles;
 
-  std::vector<double> Tijk(NoNoNo);
-  std::vector<double>
-      VhhhC(NoNoNo), TABhh(NoNo)
-    , VhhhB(NoNoNo), TAChh(NoNo)
-    , VhhhA(NoNoNo), TBChh(NoNo)
-    ;
-  std::vector<double>
-      TAphh(NoNo*Nv), VBCph(Nv*No), VCBph(Nv*No)
-    , TCphh(NoNo*Nv), VABph(Nv*No), VBAph(Nv*No)
-    , TBphh(NoNo*Nv), VACph(Nv*No), VCAph(Nv*No)
-    ;
+  std::vector<double> Tijk;
+  Tijk.reserve(NoNoNo);
 
-  LOG << "Doing " << argv[0] << " Tests\n";
-  LOG << "»»»»»»»»»»»»»»»»»\n";
+  std::vector<double> VhhhC, TABhh
+                    , VhhhB, TAChh
+                    , VhhhA, TBChh
+                    ;
+
+  VhhhC.reserve(NoNoNo);
+  TABhh.reserve(NoNo);
+  VhhhB.reserve(NoNoNo);
+  TAChh.reserve(NoNo);
+  VhhhA.reserve(NoNoNo);
+  TBChh.reserve(NoNo);
+
+  std::vector<double> TAphh, VBCph, VCBph
+                    , TCphh, VABph, VBAph
+                    , TBphh, VACph, VCAph
+                    ;
+
+  TAphh.reserve(NoNo*Nv);
+  VBCph.reserve(Nv*No);
+  VCBph.reserve(Nv*No);
+  TCphh.reserve(NoNo*Nv);
+  VABph.reserve(Nv*No);
+  VBAph.reserve(Nv*No);
+  TBphh.reserve(NoNo*Nv);
+  VACph.reserve(Nv*No);
+  VCAph.reserve(Nv*No);
+
+  LOG << "======= TRIPLES ======\n";
   LOG << SHOW_VAR(np) << "\n";
   LOG << SHOW_VAR(No) << "\n";
   LOG << SHOW_VAR(Nv) << "\n";

@@ -12,16 +12,24 @@ int main(int argc, char ** argv){
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &np);
 
-  Timings chrono;
-  auto chrono_main = chrono["main"];
-  int m(hauta::option<int>(argc, argv, "-m"))
-    , n(hauta::option<int>(argc, argv, "-n"))
-    , k(hauta::option<int>(argc, argv, "-k"))
-    , iterations(hauta::option<int>(argc, argv, "-i", 1))
-    ;
   const bool warmup(hauta::option<bool>(argc, argv, "-/warmup", true))
            , vector(hauta::option<bool>(argc, argv, "--vector", false))
+           , holes(hauta::option<bool>(argc, argv, "--holes", false))
            ;
+
+  const
+  size_t No = hauta::option<size_t>(argc, argv, "--no")
+       , Nv = hauta::option<size_t>(argc, argv, "--nv")
+       , iterations = hauta::option<size_t>(argc, argv, "-i", 1)
+       ;
+
+  int m = holes ? No*No : No
+    , n = holes ? No    : No*No
+    , k = holes ? No    : Nv
+    ;
+
+  Timings chrono;
+  auto chrono_main = chrono["main"];
 
   double *A, *B, *C;
   std::vector<double> vA, vB, vC;
@@ -44,38 +52,32 @@ int main(int argc, char ** argv){
   const double flopCount(double(n*m*2*k) * double(iterations));
   std::chrono::duration<double> duration;
 
+  LOG << "======= BLAS ======\n";
   LOG << SHOW_VAR(flopCount) << "\n";
   LOG << SHOW_VAR(iterations) << "\n";
   LOG << SHOW_VAR(np) << "\n";
+  LOG << SHOW_VAR(holes) << "\n";
+  LOG << SHOW_VAR(m) << " " << SHOW_VAR(n) << " " << SHOW_VAR(k) << "\n";
 
   if (warmup) {
     LOG << "Warming up \n";
     dgemm_("N", "N", &m, &n, &k, &one, A, &m, B, &k, &one, C, &m);
   }
 
-  auto start = std::chrono::high_resolution_clock::now();
+  chrono_main.start();
   for (size_t it = 0; it < iterations; it++) {
-    chrono_main.start();
     dgemm_("N", "N", &m, &n, &k, &one, A, &m, B, &k, &one, C, &m);
     dgemm_("N", "N", &m, &n, &k, &one, A, &m, B, &k, &one, C, &m);
     dgemm_("N", "N", &m, &n, &k, &one, A, &m, B, &k, &one, C, &m);
-    chrono_main.stop();
+    dgemm_("N", "N", &m, &n, &k, &one, A, &m, B, &k, &one, C, &m);
+    dgemm_("N", "N", &m, &n, &k, &one, A, &m, B, &k, &one, C, &m);
+    dgemm_("N", "N", &m, &n, &k, &one, A, &m, B, &k, &one, C, &m);
   }
-  auto end = std::chrono::high_resolution_clock::now();
+  chrono_main.stop();
 
-  double est = 0.001 *std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-  duration = end - start;
   LOG << "main: " << chrono_main.count() << std::endl;
-  LOG << "duration: " << duration.count() << std::endl;
-  LOG << "time: " << est << std::endl;
-  LOG << m << " "
-      << n << " "
-      << k << " flops: "
-      << flopCount << " "<< 3*flopCount/1e9/est << std::endl;
-  LOG << m << " "
-      << n << " "
-      << k
-      << " flops: " << flopCount << " "<< 3*flopCount/1e9/(chrono_main.count()) << std::endl;
+  LOG << "flops: " << 6 * flopCount / 1e9 / chrono_main.count()
+      << std::endl;
 
   MPI_Finalize();
   return 0;

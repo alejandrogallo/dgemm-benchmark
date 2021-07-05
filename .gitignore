@@ -3,3 +3,4 @@ dgemm
 dgemm-debug
 *.out
 peakperf
+bin
