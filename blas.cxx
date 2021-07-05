@@ -50,14 +50,23 @@ int main(int argc, char ** argv){
 
   double one(1.0);
   const double flopCount(double(n*m*2*k) * double(iterations));
-  std::chrono::duration<double> duration;
 
   LOG << "======= BLAS ======\n";
-  LOG << SHOW_VAR(flopCount) << "\n";
-  LOG << SHOW_VAR(iterations) << "\n";
   LOG << SHOW_VAR(np) << "\n";
+  LOG << SHOW_VAR(No) << "\n";
+  LOG << SHOW_VAR(Nv) << "\n";
+  LOG << SHOW_VAR(iterations) << "\n";
+  LOG << SHOW_VAR(flopCount) << "\n";
   LOG << SHOW_VAR(holes) << "\n";
+#if defined(BLIS_ARCH)
+  LOG << SHOW_MACRO(BLIS_ARCH) << "\n";
+#endif
+  LOG << SHOW_MACRO(GIT_COMMIT) << "\n";
+  LOG << SHOW_MACRO(DATE) << "\n";
+  LOG << SHOW_MACRO(CONFIG) << "\n";
+  LOG << SHOW_MACRO(COMPILER_VERSION) << "\n";
   LOG << SHOW_VAR(m) << " " << SHOW_VAR(n) << " " << SHOW_VAR(k) << "\n";
+
 
   if (warmup) {
     LOG << "Warming up \n";

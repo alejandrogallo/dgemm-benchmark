@@ -24,6 +24,7 @@ $(TARGETS): Makefile
 DEFINES += -DGIT_COMMIT="$(shell git describe --always)"
 DEFINES += -DCONFIG=$(CONFIG)
 DEFINES += -DCOMPILER_VERSION="$(shell $(CXX) --version)"
+DEFINES += -DDATE="$(shell date)"
 
 bin/${CONFIG}/%-debug: %.cxx
 	@mkdir -p ${@D}

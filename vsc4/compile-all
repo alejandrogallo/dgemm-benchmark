@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-CONFIGS=`ls *.mk | xargs -I {} basename {} .mk`
+CONFIGS=`ls make/*.mk | xargs -I {} basename {} .mk`
 
 for config in ${CONFIGS}; do
   source vsc4/${config}.modules

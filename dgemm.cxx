@@ -49,11 +49,12 @@ int main(int argc, char ** argv){
   LOG << SHOW_MACRO(BLIS_ARCH) << "\n";
 #endif
   LOG << SHOW_MACRO(GIT_COMMIT) << "\n";
+  LOG << SHOW_MACRO(DATE) << "\n";
   LOG << SHOW_MACRO(CONFIG) << "\n";
   LOG << SHOW_MACRO(COMPILER_VERSION) << "\n";
 
   chrono["doubles"].start();
-  for (int it = 0; it < iterations; it++) {
+  for (size_t it = 0; it < iterations; it++) {
     chrono["start:stop"].start();
     chrono["start:stop"].stop();
 
