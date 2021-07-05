@@ -5,9 +5,9 @@
 #include <vector>
 #include <iostream>
 
-#define INSTANTIATE_VALUE(__type, __reader)           \
-  template <> __type value(Args &as, Flag &f) {       \
-    auto const v(value<std::string>(as, f));          \
+#define INSTANTIATE_OPTION(__type, __reader)          \
+  template <> __type option(Args &as, Flag &f) {       \
+    auto const v(option<std::string>(as, f));          \
     return __reader(v.c_str());                       \
   }
 
@@ -20,10 +20,10 @@ namespace hauta {
     return std::find(a.begin(), a.end(), f) != a.end();
   }
 
-  // value
-  template<typename F> F value(Args &args, Flag &f);
+  // option
+  template<typename F> F option(Args &args, Flag &f);
 
-  template<> std::string value(Args &a, Flag &f) {
+  template<> std::string option(Args &a, Flag &f) {
     const auto it(std::find(a.begin(), a.end(), f));
     if (!isFlagPresent(a, f)) {
       std::cerr << "Expecting flag " << f << "\n";
@@ -32,27 +32,36 @@ namespace hauta {
     return std::string(*(it+1));
   }
 
-  INSTANTIATE_VALUE(size_t, std::atoi)
-  INSTANTIATE_VALUE(int,    std::atoi)
-  INSTANTIATE_VALUE(double, std::atof)
-  INSTANTIATE_VALUE(float,  std::atof)
+  INSTANTIATE_OPTION(size_t, std::atoi)
+  INSTANTIATE_OPTION(int,    std::atoi)
+  INSTANTIATE_OPTION(double, std::atof)
+  INSTANTIATE_OPTION(float,  std::atof)
 
-  template<typename F> F value(Args &args, Flag &f, F const def) {
+  template<> bool option(Args &a, Flag &f) { return isFlagPresent(a, f); }
+
+  template<typename F> F option(Args &args, Flag &f, F const def) {
     return isFlagPresent(args, f)
-         ? value<F>(args, f)
+         ? option<F>(args, f)
+         : def
+         ;
+  }
+
+  template<> bool option(Args &args, Flag &f, bool const def) {
+    return isFlagPresent(args, f)
+         ? !def
          : def
          ;
   }
 
   template <typename F>
-  F value(int argc, char **argv, Flag& f, const F def) {
-    return value<F>(Args {argv, argv + argc}, f, def);
+  F option(int argc, char **argv, Flag& f, const F def) {
+    return option<F>(Args {argv, argv + argc}, f, def);
   }
   template <typename F>
-  F value(int argc, char **argv, Flag& f) {
-    return value<F>(Args {argv, argv + argc}, f);
+  F option(int argc, char **argv, Flag& f) {
+    return option<F>(Args {argv, argv + argc}, f);
   }
 
 }
 
-#undef INSTANTIATE_VALUE
+#undef INSTANTIATE_OPTION

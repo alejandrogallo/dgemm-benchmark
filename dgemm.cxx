@@ -7,6 +7,7 @@
 
 
 int main(int argc, char ** argv){
+
   int rank, np;
   MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -14,11 +15,11 @@ int main(int argc, char ** argv){
 
   Timings chrono;
   double one(1.0), m_one(-1.0), zero(0.0);
-  const int
-      No(atoi(argv[1]))
-    , Nv(atoi(argv[2]))
-    , iterations(atoi(argv[3]))
-    ;
+
+  size_t No = hauta::option<size_t>(argc, argv, "--no")
+       , Nv = hauta::option<size_t>(argc, argv, "--nv")
+       , iterations = hauta::option<size_t>(argc, argv, "-i", 1)
+       ;
 
   const int NoNo = No*No, NoNoNo = No*No*No;
   const double flopCountParticles = double(NoNoNo) * double(Nv) * 2.0 * 6.0 / 1e9;

@@ -4,6 +4,7 @@
 #include <chrono>
 #include <map>
 #include <string>
+#include "hauta.h"
 #define Q(...) #__VA_ARGS__
 #define QUOTE(...) Q(__VA_ARGS__)
 #define SHOW_MACRO(x) #x ": " QUOTE(x)
@@ -17,12 +18,8 @@ struct Timer {
   using Event = std::chrono::time_point<Clock>;
   std::chrono::duration<double> duration;
   Event _start;
-  Event start() { return _start = Clock::now(); }
-  Event stop() {
-    Event const _end = Clock::now();
-    duration += _end - _start;
-    return _end;
-  }
+  void start() { _start = Clock::now(); }
+  void stop() { duration += Clock::now() - _start; }
   double count() const { return duration.count(); }
 };
 

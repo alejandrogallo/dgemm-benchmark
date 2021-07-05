@@ -45,6 +45,9 @@
                , (int const*)&NoNo       \
                );
 
+#undef REORDER
+#define REORDER(__II, __JJ, __KK)
+
 void doDoubles(size_t No, size_t Nv,
                double const* VhhhC, double const* TABhh,
                double const* VhhhB, double const* TAChh,
@@ -120,11 +123,11 @@ int main(int argc, char ** argv){
   MPI_Comm_size(MPI_COMM_WORLD, &np);
 
   Timings chrono;
-  const int
-      No(atoi(argv[1]))
-    , Nv(atoi(argv[2]))
-    , iterations(atoi(argv[3]))
-    ;
+
+  size_t No = hauta::option<size_t>(argc, argv, "--no")
+       , Nv = hauta::option<size_t>(argc, argv, "--nv")
+       , iterations = hauta::option<size_t>(argc, argv, "-i", 1)
+       ;
 
   const int NoNo = No*No, NoNoNo = No*No*No;
   const double flopCountParticles = double(NoNoNo) * double(Nv) * 2.0 * 6.0 / 1e9;
@@ -166,6 +169,8 @@ int main(int argc, char ** argv){
 
   chrono["total"].start();
   for (int it = 0; it < iterations; it++) {
+    chrono["start:stop"].start();
+    chrono["start:stop"].stop();
 
     chrono["doubles"].start();
     doDoubles(No, Nv,
