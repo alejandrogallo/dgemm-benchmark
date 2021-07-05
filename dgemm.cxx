@@ -7,9 +7,10 @@
 
 
 int main(int argc, char ** argv){
-  int rank;
+  int rank, np;
   MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  MPI_Comm_size(MPI_COMM_WORLD, &np);
 
   Timings chrono;
   double one(1.0), m_one(-1.0), zero(0.0);
@@ -30,6 +31,7 @@ int main(int argc, char ** argv){
 
   LOG << "Doing DGEMM Tests\n";
   LOG << "»»»»»»»»»»»»»»»»»\n";
+  LOG << SHOW_VAR(np) << "\n";
   LOG << SHOW_VAR(No) << "\n";
   LOG << SHOW_VAR(Nv) << "\n";
   LOG << SHOW_VAR(iterations) << "\n";

@@ -56,7 +56,7 @@ void doDoubles(size_t No, size_t Nv,
                double* Tijk,
                Timings& chrono) {
 
-  const int NoNo = No*No, NoNoNo = No*No*No;
+  const size_t NoNo = No*No, NoNoNo = No*No*No;
   double one(1.0), m_one(-1.0), zero(0.0);
   std::vector<double> _t_buffer(NoNoNo);
 
@@ -114,9 +114,10 @@ void doDoubles(size_t No, size_t Nv,
 }
 
 int main(int argc, char ** argv){
-  int rank;
+  int rank, np;
   MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  MPI_Comm_size(MPI_COMM_WORLD, &np);
 
   Timings chrono;
   const int
@@ -142,8 +143,9 @@ int main(int argc, char ** argv){
     , TBphh(NoNo*Nv), VACph(Nv*No), VCAph(Nv*No)
     ;
 
-  LOG << "Doing DGEMM Tests\n";
+  LOG << "Doing " << argv[0] << " Tests\n";
   LOG << "»»»»»»»»»»»»»»»»»\n";
+  LOG << SHOW_VAR(np) << "\n";
   LOG << SHOW_VAR(No) << "\n";
   LOG << SHOW_VAR(Nv) << "\n";
   LOG << SHOW_VAR(iterations) << "\n";
@@ -197,6 +199,28 @@ int main(int argc, char ** argv){
     << flopCount * iterations
     / (chrono["doubles"].count() - chrono["doubles:reorder"].count())
     << "\n";
+  LOG
+    << "flops:holes "
+    << flopCountHoles * iterations / chrono["doubles:holes"].count()
+    << "\n";
+  LOG
+    << "flops:holes:no-reorder "
+    << flopCountHoles * iterations
+    / ( chrono["doubles:holes"].count()
+      - 0.5 * chrono["doubles:reorder"].count()
+      )
+   << "\n";
+  LOG
+    << "flops:particles "
+    << flopCountParticles * iterations / chrono["doubles:particles"].count()
+    << "\n";
+  LOG
+    << "flops:doubles:no-reorder "
+    << flopCountParticles * iterations
+    / ( chrono["doubles:particles"].count()
+      - 0.5 * chrono["doubles:reorder"].count()
+      )
+   << "\n";
 
   MPI_Finalize();
 
