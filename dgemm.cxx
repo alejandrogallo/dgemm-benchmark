@@ -5,6 +5,7 @@
 #include "utils.h"
 #include "dgemm.h"
 
+//#define NO_REORDER
 
 int main(int argc, char ** argv){
 
