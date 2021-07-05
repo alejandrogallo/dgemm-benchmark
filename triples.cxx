@@ -254,17 +254,9 @@ int main(int argc, char ** argv){
         << "\n";
 
   LOG
-    << "flops:doubles "
-    << flopCount * iterations / chrono["doubles"].count()
-    << "\n";
-  LOG
     << "flops:doubles:no-reorder "
     << flopCount * iterations
     / (chrono["doubles"].count() - chrono["doubles:reorder"].count())
-    << "\n";
-  LOG
-    << "flops:holes "
-    << flopCountHoles * iterations / chrono["doubles:holes"].count()
     << "\n";
   LOG
     << "flops:holes:no-reorder "
@@ -274,16 +266,24 @@ int main(int argc, char ** argv){
       )
    << "\n";
   LOG
-    << "flops:particles "
-    << flopCountParticles * iterations / chrono["doubles:particles"].count()
-    << "\n";
-  LOG
     << "flops:doubles:no-reorder "
     << flopCountParticles * iterations
     / ( chrono["doubles:particles"].count()
       - 0.5 * chrono["doubles:reorder"].count()
       )
    << "\n";
+  LOG
+    << "flops:holes "
+    << flopCountHoles * iterations / chrono["doubles:holes"].count()
+    << "\n";
+  LOG
+    << "flops:particles "
+    << flopCountParticles * iterations / chrono["doubles:particles"].count()
+    << "\n";
+  LOG
+    << "flops:doubles "
+    << flopCount * iterations / chrono["doubles"].count()
+    << "\n";
 
   MPI_Finalize();
 

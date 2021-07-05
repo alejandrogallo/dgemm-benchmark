@@ -85,7 +85,8 @@ int main(int argc, char ** argv){
   chrono_main.stop();
 
   LOG << "main: " << chrono_main.count() << std::endl;
-  LOG << "flops: " << 6 * flopCount / 1e9 / chrono_main.count()
+  LOG << (holes ? "holes" : "particles") << ":flops: "
+      << 6 * flopCount / 1e9 / chrono_main.count()
       << std::endl;
 
   MPI_Finalize();
