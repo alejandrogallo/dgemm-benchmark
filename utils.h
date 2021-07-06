@@ -24,3 +24,24 @@ struct Timer {
 };
 
 using Timings = std::map<std::string, Timer>;
+
+struct Averager {
+  std::vector<double> values;
+  void push(double flopValue) { values.push_back(flopValue); }
+  double count() const {
+    return
+      std::accumulate(values.begin(), values.end(), 0.0) / values.size();
+  }
+  size_t size() const { return values.size(); }
+  double sigma() const {
+    const double mu = count();
+    double sigma = 0.0;
+    for (auto x: values) {
+      sigma += (x - mu) * (x - mu);
+    }
+    sigma /= values.size();
+    return std::sqrt(sigma);
+  }
+};
+
+using Averages = std::map<std::string, Averager>;
