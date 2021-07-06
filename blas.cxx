@@ -16,7 +16,10 @@ int main(int argc, char ** argv){
   const bool warmup(hauta::option<bool>(argc, argv, "-/warmup", true))
            , vector(hauta::option<bool>(argc, argv, "--vector", false))
            , holes(hauta::option<bool>(argc, argv, "--holes", false))
+           , initialize(hauta::option<bool>(argc, argv, "--init", false))
            ;
+
+  const std::string container = vector ? "std::vector" : "double[]";
 
   const
   size_t No = hauta::option<size_t>(argc, argv, "--no")
@@ -35,44 +38,37 @@ int main(int argc, char ** argv){
 
   double *A, *B, *C;
 
-  //std::vector<double> vA, vB, vC;
-  //vA.reserve(m*k);
-  //vB.reserve(n*k);
-  //vC.reserve(n*m);
-
-  //std::vector<double> vA(m*k), vB(n*k), vC(n*m);
   std::vector<double> vA, vB, vC;
-  auto pA(std::make_shared<std::vector<double>>())
-     , pB(std::make_shared<std::vector<double>>())
-     , pC(std::make_shared<std::vector<double>>())
-     ;
-  pA->reserve(m*k);
-  pB->reserve(n*k);
-  pC->reserve(n*m);
-  //std::vector<double> vA(m*k, 0.0), vB(n*k, 0.0), vC(n*m, 0.0);
   vA.reserve(m*k);
   vB.reserve(n*k);
   vC.reserve(n*m);
 
   if (!vector) {
-    LOG << "Using carrays\n";
     A = new double[m*k];
     B = new double[k*n];
     C = new double[m*n];
+    if (initialize) {
+      for (size_t i=0; i<m*k; i++) A[i] = 0.0;
+      for (size_t i=0; i<k*n; i++) B[i] = 0.0;
+      for (size_t i=0; i<m*n; i++) C[i] = 0.0;
+    }
   } else {
-    LOG << "Using std::vector\n";
-    //A = vA.data();
-    //B = vB.data();
-    //C = vC.data();
-    A = pA->data();
-    B = pB->data();
-    C = pC->data();
+    if (initialize) {
+      vA.resize(m*k);
+      vB.resize(n*k);
+      vC.resize(n*m);
+    }
+    A = vA.data();
+    B = vB.data();
+    C = vC.data();
   }
 
   double one(1.0);
   const double flopCount = double(2*n*m*k) * 6 * double(iterations) / 1e9;
 
   LOG << "======= BLAS ======\n";
+  LOG << SHOW_VAR(container) << "\n";
+  LOG << SHOW_VAR(initialize) << "\n";
   LOG << SHOW_VAR(np) << "\n";
   LOG << SHOW_VAR(No) << "\n";
   LOG << SHOW_VAR(Nv) << "\n";

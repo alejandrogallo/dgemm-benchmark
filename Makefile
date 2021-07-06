@@ -27,7 +27,7 @@ $(OPTIONS)      \
 DEB_FLAGS = -DDEBU -O0 -g
 OPT_FLAGS = -O3
 
-all: bin
+all: bin obj lst
 bin: $(BIN)
 obj: $(OBJ)
 lst: $(LST) Makefile
