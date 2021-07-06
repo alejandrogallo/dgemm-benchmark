@@ -1,7 +1,14 @@
-TARGETS = dgemm-debug dgemm
+-include config.mk
+.DEFAULT_GOAL ::= bin
+
+TARGETS  = dgemm-debug   dgemm
 TARGETS += triples-debug triples
-TARGETS += blas-debug blas
-TARGETS += vector-debug vector
+TARGETS += blas-debug    blas
+TARGETS += vector-debug  vector
+
+BIN := $(patsubst %,bin/${CONFIG}/%,$(TARGETS))
+OBJ := $(patsubst %,obj/${CONFIG}/%.o,$(TARGETS))
+LST := $(patsubst %,obj/${CONFIG}/%.lst,$(TARGETS))
 
 CONFIG ?= icc
 include make/${CONFIG}.mk
@@ -10,14 +17,20 @@ $(info CONFIG = $(CONFIG))
 
 CXX_FLAGS =     \
 -pedantic -Wall \
+-ansi \
 -std=c++11      \
 -fmax-errors=1  \
 $(OPTIONS)      \
 -march=native   \
 -Wl,-Bstatic $(LIBS_STATIC) -Wl,-Bdynamic
 
+DEB_FLAGS = -DDEBU -O0 -g
+OPT_FLAGS = -O3
 
-all: $(patsubst %,bin/${CONFIG}/%,$(TARGETS))
+all: bin
+bin: $(BIN)
+obj: $(OBJ)
+lst: $(LST) Makefile
 
 
 $(TARGETS): Makefile
@@ -29,13 +42,24 @@ DEFINES += -DDATE="$(shell date)"
 
 bin/${CONFIG}/%-debug: %.cxx
 	@mkdir -p ${@D}
-	$(CXX) $(DEFINES) $(INCLUDES) -DDEBUG $< $(CXX_FLAGS) -O0 -g -o $@
+	$(CXX) $(DEFINES) $(INCLUDES) ${DEB_FLAGS} $< $(CXX_FLAGS) -o $@
 
 bin/${CONFIG}/%: %.cxx
 	@mkdir -p ${@D}
-	$(CXX) $(DEFINES) $(INCLUDES) $< $(CXX_FLAGS) -O3 -o $@
+	$(CXX) $(DEFINES) $(INCLUDES) ${OPT_FLAGS} $< $(CXX_FLAGS) -o $@
+
+obj/${CONFIG}/%-debug.o: %.cxx
+	@mkdir -p ${@D}
+	$(CXX) $(DEFINES) $(INCLUDES) ${DEB_FLAGS} -c $< $(CXX_FLAGS) -o $@
+
+obj/${CONFIG}/%.o: %.cxx
+	@mkdir -p ${@D}
+	$(CXX) $(DEFINES) $(INCLUDES) ${OPT_FLAGS} -c $< $(CXX_FLAGS) -o $@
+
+%.lst: %.o
+	objdump --demangle -f -l -Mintel -S $< > $@
 
 clean:
-	rm -r bin
+	rm -r bin/${CONFIG} obj/${CONFIG}
 
-.PHONY: all clean
+.PHONY: all clean bin obj lst
