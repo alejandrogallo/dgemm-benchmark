@@ -102,6 +102,10 @@ int main(int argc, char ** argv){
         << "\n"
         ;
 
+  for (auto f: averages["flops:main"].values) 
+    LOG << f << ", ";
+  LOG << "\n";
+
   MPI_Finalize();
   return 0;
 

@@ -4,6 +4,9 @@
 #include <chrono>
 #include <map>
 #include <string>
+#include <algorithm>
+#include <numeric>
+#include <cmath>
 #include "hauta.h"
 #define Q(...) #__VA_ARGS__
 #define QUOTE(...) Q(__VA_ARGS__)
