@@ -1,0 +1,12 @@
+{
+  config=icc
+  bin=blas
+  np=48
+  no=81
+  nv=949
+  iterations=100
+  ex="mpirun -np $np ./bin/${config}/${bin}"
+  source vsc4/${config}.modules > /dev/null &&
+  make all CONFIG=$config &&
+  ${ex} --no $no --nv $nv -i $iterations --holes -/warmup  --avg 30
+}
