@@ -13,7 +13,9 @@ int main(int argc, char ** argv){
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &np);
 
-  const bool vector(hauta::option<bool>(argc, argv, "--vector", false));
+  const bool vector(hauta::option<bool>(argc, argv, "--vector", false))
+           , initialize(hauta::option<bool>(argc, argv, "--init", false))
+           ;
   const std::string container = vector ? "std::vector" : "double[]";
 
   const
@@ -38,15 +40,16 @@ int main(int argc, char ** argv){
 
   //std::vector<double> vA(m*k), vB(n*k), vC(n*m);
   std::vector<double> vA, vB, vC;
-  //std::vector<double> vA(m*k, 0.0), vB(n*k, 0.0), vC(n*m, 0.0);
 
   vA.reserve(m*k);
   vB.reserve(n*k);
   vC.reserve(n*m);
 
-  vA.resize(m*k);
-  vB.resize(n*k);
-  vC.resize(n*m);
+  if (initialize) {
+    vA.resize(m*k);
+    vB.resize(n*k);
+    vC.resize(n*m);
+  }
 
   for (auto &i: vA) i += 5;
   for (auto &i: vB) i += 5;
@@ -57,6 +60,11 @@ int main(int argc, char ** argv){
     A = new double[m*k];
     B = new double[k*n];
     C = new double[m*n];
+    if (initialize) {
+      for (size_t i=0; i<m*k; i++) A[i] = 0.0;
+      for (size_t i=0; i<k*n; i++) B[i] = 0.0;
+      for (size_t i=0; i<m*n; i++) C[i] = 0.0;
+    }
   } else {
     A = vA.data();
     B = vB.data();
@@ -73,6 +81,7 @@ int main(int argc, char ** argv){
 
   LOG << "======= VECTOR ======\n";
   LOG << SHOW_VAR(container) << "\n";
+  LOG << SHOW_VAR(initialize) << "\n";
   LOG << SHOW_VAR(np) << "\n";
   LOG << SHOW_VAR(No) << "\n";
   LOG << SHOW_VAR(Nv) << "\n";
