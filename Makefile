@@ -1,6 +1,7 @@
 TARGETS = dgemm-debug dgemm
 TARGETS += triples-debug triples
 TARGETS += blas-debug blas
+TARGETS += vector-debug vector
 
 CONFIG ?= icc
 include make/${CONFIG}.mk
