@@ -1,7 +1,7 @@
 -include config.mk
-.DEFAULT_GOAL ::= bin
+.DEFAULT_GOAL := bin
 
-TARGETS  = dgemm-debug   dgemm
+TARGETS += dgemm-debug   dgemm
 TARGETS += triples-debug triples
 TARGETS += blas-debug    blas
 TARGETS += vector-debug  vector
@@ -19,6 +19,14 @@ CXX_FLAGS =     \
 -pedantic -Wall \
 -ansi \
 -std=c++11      \
+-fmax-errors=1  \
+$(OPTIONS)      \
+-march=native   \
+-Wl,-Bstatic $(LIBS_STATIC) -Wl,-Bdynamic
+
+CFLAGS =        \
+-pedantic -Wall \
+-ansi \
 -fmax-errors=1  \
 $(OPTIONS)      \
 -march=native   \
@@ -47,6 +55,15 @@ bin/${CONFIG}/%-debug: %.cxx
 bin/${CONFIG}/%: %.cxx
 	@mkdir -p ${@D}
 	$(CXX) $(DEFINES) $(INCLUDES) ${OPT_FLAGS} $< $(CXX_FLAGS) -o $@
+
+bin/${CONFIG}/%-debug: %.c
+	@mkdir -p ${@D}
+	$(CC) $(DEFINES) $(INCLUDES) ${DEB_FLAGS} $< $(CFLAGS) -o $@
+
+bin/${CONFIG}/%: %.c
+	@mkdir -p ${@D}
+	$(CC) $(DEFINES) $(INCLUDES) ${OPT_FLAGS} $< $(CFLAGS) -o $@
+
 
 obj/${CONFIG}/%-debug.o: %.cxx
 	@mkdir -p ${@D}
